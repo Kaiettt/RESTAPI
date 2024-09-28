@@ -4,11 +4,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.service.UserService;
+import vn.hoidanit.jobhunter.service.error.HandleNumber;
+import vn.hoidanit.jobhunter.service.error.IdInvalidException;
+
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Optional;
 import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,30 +34,54 @@ public class UserController {
         return new String();
     }
 
-    @PostMapping("/user")
-    public User createNewUser(@RequestBody User postManUser) {
+    @GetMapping("/")
+    public String getHelloWorld() {
+        return "asdsd";
+    }
+
+    @PostMapping("/users")
+    public ResponseEntity<User> createNewUser(@RequestBody User postManUser) {
         User user = this.userService.handleSaveUser(postManUser);
-        return user;
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
-    @DeleteMapping("/user/{id}")
-    public String deleteUser(@PathVariable("id") long id) {
-        this.userService.handleDeleteUser(id);
-        return "Delete";
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable("id") String id) throws IdInvalidException {
+        if (!HandleNumber.isNumberic(id)) {
+            throw new IdInvalidException("Can pass vao mot con so");
+        }
+
+        Long real_id = Long.valueOf(id);
+        if (real_id >= 1500) {
+            throw new IdInvalidException("ID khong hop le");
+        }
+
+        this.userService.handleDeleteUser(real_id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Delete User Sucessfully");
     }
 
-    @GetMapping("/user/{id}")
-    public User getUser(@PathVariable("id") long id) {
-        return this.userService.getUserById(id);
+    @GetMapping("/users/{id}")
+    public ResponseEntity<User> getUser(@PathVariable("id") String id) throws IdInvalidException {
+        if (!HandleNumber.isNumberic(id)) {
+            throw new IdInvalidException("Can pass vao mot con so");
+        }
+        Long real_id = Long.valueOf(id);
+        if (real_id >= 1500) {
+            throw new IdInvalidException("ID khong hop le");
+        }
+        User user = this.userService.getUserById(real_id);
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
-    @GetMapping("/user")
-    public List<User> getAllUsers() {
-        return this.userService.getAllUsers();
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = this.userService.getAllUsers();
+        return ResponseEntity.status(HttpStatus.OK).body(users);
     }
 
-    @PutMapping("/user")
-    public User updateUser(@RequestBody User updatedUser) {
-        return this.userService.handleUpdateUser(updatedUser);
+    @PutMapping("/users")
+    public ResponseEntity<User> updateUser(@RequestBody User updatedUser) {
+        User user = this.userService.handleUpdateUser(updatedUser);
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 }
