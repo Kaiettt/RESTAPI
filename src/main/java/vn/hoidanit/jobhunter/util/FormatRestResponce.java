@@ -23,7 +23,9 @@ public class FormatRestResponce implements ResponseBodyAdvice<Object> {
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
             Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         HttpServletResponse servletResponse = ((ServletServerHttpResponse) response).getServletResponse();
+
         int status = servletResponse.getStatus();
+
         RestResponce<Object> res = new RestResponce<Object>();
         res.setStatusCode(status);
         if (status >= 400) {
