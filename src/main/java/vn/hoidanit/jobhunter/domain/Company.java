@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 
@@ -26,7 +27,12 @@ public class Company {
     private Instant createdAt;
     private Instant updatedAt;
     private String createdBy;
-    private String updatedBys;
+    private String updatedBy;
+
+    @PrePersist
+    public void handleCreatedBy() {
+        this.createdBy = "anhkiet";
+    }
 
     public long getId() {
         return id;
@@ -92,12 +98,12 @@ public class Company {
         this.createdBy = createdBy;
     }
 
-    public String getUpdatedBys() {
-        return updatedBys;
+    public String getUpdatedBy() {
+        return updatedBy;
     }
 
-    public void setUpdatedBys(String updatedBys) {
-        this.updatedBys = updatedBys;
+    public void setUpdatedBy(String updatedBys) {
+        this.updatedBy = updatedBys;
     }
 
 }
