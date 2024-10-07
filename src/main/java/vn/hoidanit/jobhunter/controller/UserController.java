@@ -2,7 +2,11 @@ package vn.hoidanit.jobhunter.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.turkraft.springfilter.boot.Filter;
+
+import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.User;
+import vn.hoidanit.jobhunter.domain.DTO.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.service.error.HandleNumber;
 import vn.hoidanit.jobhunter.service.error.IdInvalidException;
@@ -11,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -48,18 +54,23 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable("id") String id) throws IdInvalidException {
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") String id) throws IdInvalidException {
+        // Check if the ID is numeric
         if (!HandleNumber.isNumberic(id)) {
-            throw new IdInvalidException("Can pass vao mot con so");
+            throw new IdInvalidException("The provided ID must be a numeric value.");
         }
 
-        Long real_id = Long.valueOf(id);
-        if (real_id >= 1500) {
-            throw new IdInvalidException("ID khong hop le");
+        Long realId = Long.valueOf(id);
+
+        // Validate if the ID is within an acceptable range
+        if (realId >= 1500) {
+            throw new IdInvalidException("Invalid ID. The ID must be less than 1500.");
         }
 
-        this.userService.handleDeleteUser(real_id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Delete User Sucessfully");
+        // Call the service to handle user deletion
+        this.userService.handleDeleteUser(realId);
+
+        return ResponseEntity.ok(null);
     }
 
     @GetMapping("/users/{id}")
@@ -76,9 +87,8 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = this.userService.getAllUsers();
-        return ResponseEntity.status(HttpStatus.OK).body(users);
+    public ResponseEntity<ResultPaginationDTO> getAllUsers(@Filter Specification<User> spec, Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.getAllUsers(spec, pageable));
     }
 
     @PutMapping("/users")
