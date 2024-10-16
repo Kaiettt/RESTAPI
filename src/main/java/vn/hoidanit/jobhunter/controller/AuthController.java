@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.User;
-import vn.hoidanit.jobhunter.domain.DTO.RestLoginDTO;
-import vn.hoidanit.jobhunter.domain.DTO.loginDTO;
+import vn.hoidanit.jobhunter.domain.request.ReqloginDTO;
+import vn.hoidanit.jobhunter.domain.res.RestLoginDTO;
 import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.service.annotation.ApiMessage;
 import vn.hoidanit.jobhunter.service.error.IdInvalidException;
@@ -25,7 +25,6 @@ import vn.hoidanit.jobhunter.util.SecurityUtil;
 
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -46,7 +45,7 @@ public class AuthController {
 
     @PostMapping("/auth/login")
     @ApiMessage("Login Successfully")
-    public ResponseEntity<RestLoginDTO> login(@Valid @RequestBody loginDTO loginDto) {
+    public ResponseEntity<RestLoginDTO> login(@Valid @RequestBody ReqloginDTO loginDto) {
         // Nạp input gồm username/password vào Security
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 loginDto.getUsername(), loginDto.getPassword());

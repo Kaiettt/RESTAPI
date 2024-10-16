@@ -1,34 +1,30 @@
-package vn.hoidanit.jobhunter.domain.DTO;
+package vn.hoidanit.jobhunter.domain.res;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.time.Instant;
 
 import vn.hoidanit.jobhunter.util.constant.GenderEnum;
 
-public class RestNewUserResponce {
+public class ResUpdateUserResponce {
     private long id;
     private String name;
-    private String email;
     private GenderEnum gender;
     private String address;
     private int age;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
-    private Instant createdAt;
+    private Instant updatedAt;
 
+    public ResUpdateUserResponce() {
 
-    public RestNewUserResponce(){
-        
     }
-    public RestNewUserResponce(long id, String name, String email, GenderEnum gender, String address, int age,
-            Instant createdAt) {
+
+    public ResUpdateUserResponce(long id, String name, GenderEnum gender, String address, int age, Instant updatedAt) {
         this.id = id;
         this.name = name;
-        this.email = email;
         this.gender = gender;
         this.address = address;
         this.age = age;
-        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public long getId() {
@@ -45,14 +41,6 @@ public class RestNewUserResponce {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public GenderEnum getGender() {
@@ -79,12 +67,12 @@ public class RestNewUserResponce {
         this.age = age;
     }
 
-    public Instant getCreatedAt() {
-        return createdAt;
+    public Instant getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
 }

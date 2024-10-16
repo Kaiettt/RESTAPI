@@ -6,10 +6,10 @@ import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.persistence.EntityNotFoundException;
 import vn.hoidanit.jobhunter.domain.User;
-import vn.hoidanit.jobhunter.domain.DTO.ResUpdateUserResponce;
-import vn.hoidanit.jobhunter.domain.DTO.RestFetchUserResponce;
-import vn.hoidanit.jobhunter.domain.DTO.RestNewUserResponce;
-import vn.hoidanit.jobhunter.domain.DTO.ResultPaginationDTO;
+import vn.hoidanit.jobhunter.domain.res.ResUpdateUserResponce;
+import vn.hoidanit.jobhunter.domain.res.RestFetchUserResponce;
+import vn.hoidanit.jobhunter.domain.res.RestNewUserResponce;
+import vn.hoidanit.jobhunter.domain.res.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.service.annotation.ApiMessage;
 import vn.hoidanit.jobhunter.service.error.EmailExistedException;

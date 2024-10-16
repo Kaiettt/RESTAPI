@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.User;
-import vn.hoidanit.jobhunter.domain.DTO.Meta;
-import vn.hoidanit.jobhunter.domain.DTO.ResUpdateUserResponce;
-import vn.hoidanit.jobhunter.domain.DTO.RestFetchUserResponce;
-import vn.hoidanit.jobhunter.domain.DTO.RestNewUserResponce;
-import vn.hoidanit.jobhunter.domain.DTO.ResultPaginationDTO;
+import vn.hoidanit.jobhunter.domain.res.ResUpdateUserResponce;
+import vn.hoidanit.jobhunter.domain.res.RestFetchUserResponce;
+import vn.hoidanit.jobhunter.domain.res.RestNewUserResponce;
+import vn.hoidanit.jobhunter.domain.res.ResultPaginationDTO;
+import vn.hoidanit.jobhunter.domain.res.ResultPaginationDTO.Meta;
 import vn.hoidanit.jobhunter.repository.UserRepository;
 import vn.hoidanit.jobhunter.service.error.EmailExistedException;
 import vn.hoidanit.jobhunter.service.error.IdInvalidException;
@@ -97,7 +97,7 @@ public class UserService {
 
     public ResultPaginationDTO getAllUsers(Specification spec, Pageable pageable) {
         Page<User> userPage = this.userRepository.findAll(spec, pageable);
-        Meta meta = new Meta();
+        ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
         meta.setPage(pageable.getPageNumber() + 1);
         meta.setPageSize(pageable.getPageSize());
         meta.setPages(userPage.getTotalPages());
