@@ -3,6 +3,7 @@ package vn.hoidanit.jobhunter.service.error;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -12,20 +13,52 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import vn.hoidanit.jobhunter.domain.RestResponce;
 
 @RestControllerAdvice
 public class GlobalException {
     @ExceptionHandler(value = {
+            IdInvalidException.class,
+            EntityNotFoundException.class,
             UsernameNotFoundException.class,
             BadCredentialsException.class
     })
-    public ResponseEntity<RestResponce<Object>> handleIdException(Exception ex) {
+
+    public ResponseEntity<RestResponce<Object>> handleException(Exception ex) {
         RestResponce<Object> res = new RestResponce<Object>();
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
         res.setError(ex.getMessage());
         res.setMessage("Exception occurs...");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    }
+
+    @ExceptionHandler(value = {
+            EmailExistedException.class,
+    })
+    public ResponseEntity<RestResponce<Object>> handleEmalExistedException(Exception ex) {
+        RestResponce<Object> res = new RestResponce<Object>();
+        res.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        res.setError(ex.getMessage());
+        res.setMessage("Email already exist");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    }
+
+    // public ResponseEntity<RestResponce<Object>> EmalExistedException(Exception
+    // ex) {
+    // RestResponce<Object> res = new RestResponce<Object>();
+    // res.setStatusCode(HttpStatus.BAD_REQUEST.value());
+    // res.setError(ex.getMessage());
+    // res.setMessage("Exception occurs...");
+    // return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    // }
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<RestResponce<Object>> handleNotFoundException(Exception ex) {
+        RestResponce<Object> res = new RestResponce<Object>();
+        res.setStatusCode(HttpStatus.NOT_FOUND.value());
+        res.setError(ex.getMessage());
+        res.setMessage("404 Not Found. URL may not exist...");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
 
