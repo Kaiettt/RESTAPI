@@ -2,13 +2,13 @@ package vn.hoidanit.jobhunter.domain.DTO;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class loginDTO {
+public class ReqloginDTO {
     @NotBlank(message = "user should not be empty")
     private String username;
     @NotBlank(message = "password should not be empty")
     private String password;
 
-    public loginDTO(String username, String password) {
+    public ReqloginDTO(String username, String password) {
         this.username = username;
         this.password = password;
     }
