@@ -1,5 +1,7 @@
 package vn.hoidanit.jobhunter.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -11,28 +13,25 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.User;
+import vn.hoidanit.jobhunter.domain.res.CompanyResponce;
 import vn.hoidanit.jobhunter.domain.res.ResUpdateUserResponce;
 import vn.hoidanit.jobhunter.domain.res.RestFetchUserResponce;
 import vn.hoidanit.jobhunter.domain.res.RestNewUserResponce;
 import vn.hoidanit.jobhunter.domain.res.ResultPaginationDTO;
-import vn.hoidanit.jobhunter.domain.res.ResultPaginationDTO.Meta;
 import vn.hoidanit.jobhunter.repository.UserRepository;
 import vn.hoidanit.jobhunter.service.error.EmailExistedException;
-import vn.hoidanit.jobhunter.service.error.IdInvalidException;
-import vn.hoidanit.jobhunter.service.error.UserExistedException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final CompanyService companyService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, CompanyService companyService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.companyService = companyService;
     }
 
     public void handleUpdateRefreshToken(User user, String token) {
@@ -50,9 +49,19 @@ public class UserService {
         if (this.getUserByUserName(user.getEmail()) != null) {
             throw new EmailExistedException("Email Already Existed");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        User savedUser = this.userRepository.save(user);
         RestNewUserResponce userResponce = new RestNewUserResponce();
+        CompanyResponce companyResponce = new CompanyResponce();
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getCompany() != null) {
+            Company company = this.companyService.getCompanyById(user.getCompany().getId());
+            if (company != null) {
+                user.setCompany(company);
+                companyResponce.setId(company.getId());
+                companyResponce.setName(company.getName());
+            }
+        }
+        user = this.userRepository.save(user);
+
         userResponce.setAddress(user.getAddress());
         userResponce.setAge(user.getAge());
         userResponce.setCreatedAt(user.getCreatedAt());
@@ -60,6 +69,7 @@ public class UserService {
         userResponce.setGender(user.getGender());
         userResponce.setId(user.getId());
         userResponce.setName(user.getName());
+        userResponce.setCompany(companyResponce);
         return userResponce;
     }
 
@@ -129,10 +139,19 @@ public class UserService {
         if (user == null) {
             throw new EntityNotFoundException("User not existed");
         }
+        CompanyResponce companyResponce = new CompanyResponce();
         user.setName(updatedUser.getName());
         user.setGender(updatedUser.getGender());
         user.setAge(updatedUser.getAge());
         user.setAddress(updatedUser.getAddress());
+        if (updatedUser.getCompany() != null) {
+            Company company = this.companyService.getCompanyById(updatedUser.getCompany().getId());
+            if (company != null) {
+                user.setCompany(company);
+                companyResponce.setId(company.getId());
+                companyResponce.setName(company.getName());
+            }
+        }
         user = this.userRepository.save(user);
 
         ResUpdateUserResponce userResponce = new ResUpdateUserResponce();

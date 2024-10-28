@@ -1,8 +1,8 @@
 package vn.hoidanit.jobhunter.domain.res;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.time.Instant;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import vn.hoidanit.jobhunter.util.constant.GenderEnum;
 
@@ -15,13 +15,14 @@ public class RestNewUserResponce {
     private int age;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant createdAt;
+    private CompanyResponce company;
 
     public RestNewUserResponce() {
 
     }
 
     public RestNewUserResponce(long id, String name, String email, GenderEnum gender, String address, int age,
-            Instant createdAt) {
+            Instant createdAt, CompanyResponce company) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -29,6 +30,7 @@ public class RestNewUserResponce {
         this.address = address;
         this.age = age;
         this.createdAt = createdAt;
+        this.company = company;
     }
 
     public long getId() {
@@ -85,6 +87,14 @@ public class RestNewUserResponce {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public CompanyResponce getCompany() {
+        return company;
+    }
+
+    public void setCompany(CompanyResponce company) {
+        this.company = company;
     }
 
 }

@@ -1,125 +1,173 @@
 package vn.hoidanit.jobhunter.domain;
 
-import java.time.Instant;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import java.time.Instant;
+import java.util.List;
 import vn.hoidanit.jobhunter.util.SecurityUtil;
 
 @Entity
 @Table(name = "companies")
 public class Company {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @NotBlank(message = "name should not be empty")
-    private String name;
-    @Column(columnDefinition = "MEDIUMTEXT")
-    private String description;
-    private String address;
-    private String logo;
-    private Instant createdAt;
-    private Instant updatedAt;
-    private String createdBy;
-    private String updatedBy;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
 
-    @PrePersist
-    public void handleBeforCreate() {
-        this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
-                ? SecurityUtil.getCurrentUserLogin().get()
-                : "";
+  @NotBlank(message = "name should not be empty")
+  private String name;
 
-        this.createdAt = Instant.now();
-    }
+  @Column(columnDefinition = "MEDIUMTEXT")
+  private String description;
 
-    @PreUpdate
-    public void handleBeforUpdate() {
-        this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
-                ? SecurityUtil.getCurrentUserLogin().get()
-                : "";
+  private String address;
+  private String logo;
+  private Instant createdAt;
+  private Instant updatedAt;
+  private String createdBy;
+  private String updatedBy;
 
-        this.updatedAt = Instant.now();
-    }
+  @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+  @JsonIgnore
+  List<User> users;
 
-    public long getId() {
-        return id;
-    }
+  @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+  @JsonIgnore
+  List<Job> jobs;
 
-    public void setId(long id) {
-        this.id = id;
-    }
+  public Company() {}
 
-    public String getName() {
-        return name;
-    }
+  public Company(
+      long id,
+      @NotBlank(message = "name should not be empty") String name,
+      String description,
+      String address,
+      String logo,
+      Instant createdAt,
+      Instant updatedAt,
+      String createdBy,
+      String updatedBy,
+      List<User> users,
+      List<Job> jobs) {
+    this.id = id;
+    this.name = name;
+    this.description = description;
+    this.address = address;
+    this.logo = logo;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+    this.createdBy = createdBy;
+    this.updatedBy = updatedBy;
+    this.users = users;
+    this.jobs = jobs;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  @PrePersist
+  public void handleBeforCreate() {
+    this.createdBy =
+        SecurityUtil.getCurrentUserLogin().isPresent() == true
+            ? SecurityUtil.getCurrentUserLogin().get()
+            : "";
 
-    public String getDescription() {
-        return description;
-    }
+    this.createdAt = Instant.now();
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  @PreUpdate
+  public void handleBeforUpdate() {
+    this.updatedBy =
+        SecurityUtil.getCurrentUserLogin().isPresent() == true
+            ? SecurityUtil.getCurrentUserLogin().get()
+            : "";
 
-    public String getAddress() {
-        return address;
-    }
+    this.updatedAt = Instant.now();
+  }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+  public long getId() {
+    return id;
+  }
 
-    public String getLogo() {
-        return logo;
-    }
+  public void setId(long id) {
+    this.id = id;
+  }
 
-    public void setLogo(String logo) {
-        this.logo = logo;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public String getAddress() {
+    return address;
+  }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+  public void setAddress(String address) {
+    this.address = address;
+  }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
+  public String getLogo() {
+    return logo;
+  }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+  public void setLogo(String logo) {
+    this.logo = logo;
+  }
 
-    public void setUpdatedBy(String updatedBys) {
-        this.updatedBy = updatedBys;
-    }
+  public Instant getCreatedAt() {
+    return createdAt;
+  }
 
+  public void setCreatedAt(Instant createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public Instant getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Instant updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBys) {
+    this.updatedBy = updatedBys;
+  }
+
+  public List<User> getUsers() {
+    return users;
+  }
+
+  public void setUsers(List<User> users) {
+    this.users = users;
+  }
 }
