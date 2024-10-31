@@ -53,7 +53,7 @@ public class SkillService {
 
   public Skill handleUpdateSkill(Skill skill) throws EntityNotFoundException {
     Optional<Skill> skillOptional = this.skillRepository.findById(skill.getId());
-    if (skillOptional.isPresent()) {
+    if (!skillOptional.isPresent()) {
       throw new EntityNotFoundException("Skill not found");
     }
     Skill dbSKill = skillOptional.get();
