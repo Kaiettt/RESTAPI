@@ -1,6 +1,6 @@
 package vn.hoidanit.jobhunter.service;
 
-import jakarta.persistence.EntityNotFoundException;
+import vn.hoidanit.jobhunter.service.error.RemoteEntityNotFound;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,10 +51,10 @@ public class SkillService {
     return null;
   }
 
-  public Skill handleUpdateSkill(Skill skill) throws EntityNotFoundException {
+  public Skill handleUpdateSkill(Skill skill) throws RemoteEntityNotFound {
     Optional<Skill> skillOptional = this.skillRepository.findById(skill.getId());
     if (!skillOptional.isPresent()) {
-      throw new EntityNotFoundException("Skill not found");
+      throw new RemoteEntityNotFound("Skill not found");
     }
     Skill dbSKill = skillOptional.get();
     dbSKill.setName(skill.getName());

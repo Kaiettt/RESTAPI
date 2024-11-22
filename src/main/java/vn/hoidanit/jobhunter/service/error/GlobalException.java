@@ -13,15 +13,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import vn.hoidanit.jobhunter.domain.RestResponce;
-
 @RestControllerAdvice
 public class GlobalException {
   @ExceptionHandler(
       value = {
         IdInvalidException.class,
-        EntityNotFoundException.class,
         UsernameNotFoundException.class,
-        BadCredentialsException.class
+        BadCredentialsException.class,
+        RemoteEntityNotFound.class  
       })
   public ResponseEntity<RestResponce<Object>> handleException(Exception ex) {
     RestResponce<Object> res = new RestResponce<Object>();
@@ -34,12 +33,13 @@ public class GlobalException {
   @ExceptionHandler(
       value = {
         EmailExistedException.class,
+        RemoteEntityExist.class
       })
   public ResponseEntity<RestResponce<Object>> handleEmalExistedException(Exception ex) {
     RestResponce<Object> res = new RestResponce<Object>();
     res.setStatusCode(HttpStatus.BAD_REQUEST.value());
     res.setError(ex.getMessage());
-    res.setMessage("Email already exist");
+    res.setMessage("Entity Exist");
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
   }
 

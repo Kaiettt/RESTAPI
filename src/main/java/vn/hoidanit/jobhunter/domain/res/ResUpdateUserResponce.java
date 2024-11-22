@@ -13,18 +13,19 @@ public class ResUpdateUserResponce {
     private int age;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant updatedAt;
-
+    private String role;
     public ResUpdateUserResponce() {
 
     }
 
-    public ResUpdateUserResponce(long id, String name, GenderEnum gender, String address, int age, Instant updatedAt) {
+    public ResUpdateUserResponce(String role,long id, String name, GenderEnum gender, String address, int age, Instant updatedAt) {
         this.id = id;
         this.name = name;
         this.gender = gender;
         this.address = address;
         this.age = age;
         this.updatedAt = updatedAt;
+        this.role = role;
     }
 
     public long getId() {
@@ -73,6 +74,14 @@ public class ResUpdateUserResponce {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
 }

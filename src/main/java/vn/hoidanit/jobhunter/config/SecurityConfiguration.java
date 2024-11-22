@@ -38,18 +38,17 @@ public class SecurityConfiguration {
   public SecurityFilterChain filterChain(
       HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint)
       throws Exception {
+    String[] whileList = { "/","/api/v1/users","/api/v1/roles",
+    "/api/v1/auth/login",
+    "/api/v1/auth/refresh",
+    "/storage/**","/api/v1/companies/**","/api/v1/jobs/**"};
     http.csrf(c -> c.disable())
         .cors(Customizer.withDefaults())
         .authorizeHttpRequests(
             authz ->
                 authz
                     .requestMatchers(
-                        "/",
-                        "/api/v1/auth/login",
-                        "/api/v1/auth/refresh",
-                        "/api/v1/users",
-                        "/api/v1/companies",
-                        "/storage/**")
+                      whileList)
                     .permitAll()
                     .anyRequest()
                     .authenticated())

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.turkraft.springfilter.boot.Filter;
 
-import jakarta.persistence.EntityNotFoundException;
+import vn.hoidanit.jobhunter.service.error.RemoteEntityNotFound;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.res.ResUpdateUserResponce;
 import vn.hoidanit.jobhunter.domain.res.RestFetchUserResponce;
@@ -52,14 +52,14 @@ public class UserController {
     @PostMapping("/users")
     @ApiMessage("Create new User")
     public ResponseEntity<RestNewUserResponce> createNewUser(@RequestBody User postManUser)
-            throws EmailExistedException {
+            throws EmailExistedException, RemoteEntityNotFound {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.handleSaveUser(postManUser));
     }
 
     @DeleteMapping("/users/{id}")
     @ApiMessage("DeleteU User")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") String id)
-            throws IdInvalidException, EntityNotFoundException {
+            throws IdInvalidException, RemoteEntityNotFound {
         // Check if the ID is numeric
         if (!HandleNumber.isNumberic(id)) {
             throw new IdInvalidException("The provided ID must be a numeric value.");
@@ -80,7 +80,7 @@ public class UserController {
     @GetMapping("/users/{id}")
     @ApiMessage("Fetching User")
     public ResponseEntity<RestFetchUserResponce> getUser(@PathVariable("id") String id)
-            throws IdInvalidException, EntityNotFoundException {
+            throws IdInvalidException, RemoteEntityNotFound {
         if (!HandleNumber.isNumberic(id)) {
             throw new IdInvalidException("Can pass vao mot con so");
         }
@@ -100,7 +100,7 @@ public class UserController {
     @PutMapping("/users")
     @ApiMessage("Update User")
     public ResponseEntity<ResUpdateUserResponce> updateUser(@RequestBody User updatedUser)
-            throws EntityNotFoundException {
+            throws RemoteEntityNotFound {
         return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleUpdateUser(updatedUser));
     }
 }

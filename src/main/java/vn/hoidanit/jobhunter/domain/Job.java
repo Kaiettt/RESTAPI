@@ -1,6 +1,11 @@
 package vn.hoidanit.jobhunter.domain;
 
+import java.time.Instant;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,11 +18,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import java.time.Instant;
-import java.util.List;
 import vn.hoidanit.jobhunter.util.SecurityUtil;
 import vn.hoidanit.jobhunter.util.constant.LevelEnum;
 
@@ -59,39 +63,11 @@ public class Job {
       inverseJoinColumns = @JoinColumn(name = "skill_id"))
   List<Skill> skills;
 
-  public Job(
-      String name,
-      String location,
-      double salary,
-      int quantity,
-      LevelEnum level,
-      String description,
-      Instant startDate,
-      Instant endDate,
-      boolean active,
-      Instant createdAt,
-      Instant updatedAt,
-      String createdBy,
-      String updatedBy,
-      Company company,
-      List<Skill> skills) {
-    this.name = name;
-    this.location = location;
-    this.salary = salary;
-    this.quantity = quantity;
-    this.level = level;
-    this.description = description;
-    this.startDate = startDate;
-    this.endDate = endDate;
-    this.active = active;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-    this.createdBy = createdBy;
-    this.updatedBy = updatedBy;
-    this.company = company;
-    this.skills = skills;
-  }
-
+  
+  @OneToMany(mappedBy = "job", fetch = FetchType.LAZY)
+  @JsonIgnore
+  List<Resume> resumes;
+  
   @PrePersist
   public void handleBeforCreate() {
     this.createdBy =
@@ -112,28 +88,29 @@ public class Job {
     this.updatedAt = Instant.now();
   }
 
-  public boolean isActive() {
-    return active;
+  public Job() {
   }
 
-  public void setActive(boolean active) {
+  public Job(long id, String name, String location, double salary, int quantity, LevelEnum level, String description,
+      Instant startDate, Instant endDate, boolean active, Instant createdAt, Instant updatedAt, String createdBy,
+      String updatedBy, Company company, List<Skill> skills, List<Resume> resumes) {
+    this.id = id;
+    this.name = name;
+    this.location = location;
+    this.salary = salary;
+    this.quantity = quantity;
+    this.level = level;
+    this.description = description;
+    this.startDate = startDate;
+    this.endDate = endDate;
     this.active = active;
-  }
-
-  public Company getCompany() {
-    return company;
-  }
-
-  public void setCompany(Company company) {
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+    this.createdBy = createdBy;
+    this.updatedBy = updatedBy;
     this.company = company;
-  }
-
-  public List<Skill> getSkills() {
-    return skills;
-  }
-
-  public void setSkills(List<Skill> skills) {
     this.skills = skills;
+    this.resumes = resumes;
   }
 
   public long getId() {
@@ -208,6 +185,14 @@ public class Job {
     this.endDate = endDate;
   }
 
+  public boolean isActive() {
+    return active;
+  }
+
+  public void setActive(boolean active) {
+    this.active = active;
+  }
+
   public Instant getCreatedAt() {
     return createdAt;
   }
@@ -239,4 +224,29 @@ public class Job {
   public void setUpdatedBy(String updatedBy) {
     this.updatedBy = updatedBy;
   }
+
+  public Company getCompany() {
+    return company;
+  }
+
+  public void setCompany(Company company) {
+    this.company = company;
+  }
+
+  public List<Skill> getSkills() {
+    return skills;
+  }
+
+  public void setSkills(List<Skill> skills) {
+    this.skills = skills;
+  }
+
+  public List<Resume> getResumes() {
+    return resumes;
+  }
+
+  public void setResumes(List<Resume> resumes) {
+    this.resumes = resumes;
+  }
+
 }

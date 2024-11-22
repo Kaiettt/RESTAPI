@@ -13,6 +13,15 @@ public class RestNewUserResponce {
     private GenderEnum gender;
     private String address;
     private int age;
+    private String role;
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant createdAt;
     private CompanyResponce company;
@@ -22,7 +31,7 @@ public class RestNewUserResponce {
     }
 
     public RestNewUserResponce(long id, String name, String email, GenderEnum gender, String address, int age,
-            Instant createdAt, CompanyResponce company) {
+            Instant createdAt, CompanyResponce company,String role) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -31,6 +40,7 @@ public class RestNewUserResponce {
         this.age = age;
         this.createdAt = createdAt;
         this.company = company;
+        this.role = role;
     }
 
     public long getId() {

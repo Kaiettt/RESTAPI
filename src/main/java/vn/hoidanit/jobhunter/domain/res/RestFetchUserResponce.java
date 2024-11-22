@@ -19,10 +19,10 @@ public class RestFetchUserResponce {
     private Instant createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant updatedAt;
-
+    private String role;
     public RestFetchUserResponce(long id, String name, String email, String password, int age, GenderEnum gender,
             String address, String refreshToken, Instant createdAt, Instant updatedAt, String createdBy,
-            String updatedBy) {
+            String updatedBy,String role) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -31,6 +31,15 @@ public class RestFetchUserResponce {
         this.address = address;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.role = role;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public RestFetchUserResponce() {

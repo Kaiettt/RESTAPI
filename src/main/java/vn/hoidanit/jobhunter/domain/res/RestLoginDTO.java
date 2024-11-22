@@ -27,6 +27,14 @@ public class RestLoginDTO {
         private long id;
         private String name;
         private String email;
+        private String role;
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
+        }
 
         public UserLogin() {
 

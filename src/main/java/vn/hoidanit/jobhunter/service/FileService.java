@@ -1,6 +1,7 @@
 package vn.hoidanit.jobhunter.service;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -10,8 +11,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import vn.hoidanit.jobhunter.service.error.StorageException;
 
 @Service
 public class FileService {
@@ -42,5 +47,20 @@ public class FileService {
       Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
     }
     return finalName;
+  }
+  public long getFileLength(String folder,String filename)throws URISyntaxException, IOException, StorageException{
+    URI uri = new URI(folder + "/" + filename);
+    Path path = Paths.get(uri);
+    File tmpDir = new File(path.toString());
+    if(tmpDir.isDirectory() || !tmpDir.exists()){
+      return 0;
+    }
+    return tmpDir.length();
+  }
+  public InputStreamResource getResource(String folder,String filename) throws URISyntaxException, IOException{
+    URI uri = new URI(folder + "/" + filename);
+    Path path = Paths.get(uri);
+    File file = new File(path.toString());
+    return new InputStreamResource(new FileInputStream(file));
   }
 }

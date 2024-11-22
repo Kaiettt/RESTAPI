@@ -1,7 +1,7 @@
 package vn.hoidanit.jobhunter.controller;
 
 import com.turkraft.springfilter.boot.Filter;
-import jakarta.persistence.EntityNotFoundException;
+import vn.hoidanit.jobhunter.service.error.RemoteEntityNotFound;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -65,7 +65,7 @@ public class SkillController {
   @PutMapping("/skills")
   @ApiMessage("Update Skills")
   public ResponseEntity<Skill> updateSkill(@RequestBody Skill updatedSkill)
-      throws EntityNotFoundException {
+      throws RemoteEntityNotFound {
     return ResponseEntity.status(HttpStatus.OK)
         .body(this.skillService.handleUpdateSkill(updatedSkill));
   }

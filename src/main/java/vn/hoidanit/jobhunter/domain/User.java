@@ -1,8 +1,8 @@
 package vn.hoidanit.jobhunter.domain;
 
 import java.time.Instant;
+import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -15,6 +15,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -45,31 +46,19 @@ public class User {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
+
+    
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonIgnore
+    List<Resume> resumes;
+
+    @ManyToOne 
+    @JoinColumn(name = "role_id") 
+    private Role role;
+
     public User(){
 
     }
-
- 
-
-    public User(long id, String name, String email, String password, int age, GenderEnum gender, String address,
-            String refreshToken, Instant createdAt, Instant updatedAt, String createdBy, String updatedBy,
-            Company company) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.age = age;
-        this.gender = gender;
-        this.address = address;
-        this.refreshToken = refreshToken;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.createdBy = createdBy;
-        this.updatedBy = updatedBy;
-        this.company = company;
-    }
-
-
 
     @PrePersist
     public void handleBeforCreate() {
@@ -88,6 +77,30 @@ public class User {
 
         this.updatedAt = Instant.now();
     }
+
+    public User(long id, String name, String email, String password, int age, GenderEnum gender, String address,
+            String refreshToken, Instant createdAt, Instant updatedAt, String createdBy, String updatedBy,
+            Company company, List<Resume> resumes) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.age = age;
+        this.gender = gender;
+        this.address = address;
+        this.refreshToken = refreshToken;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.createdBy = createdBy;
+        this.updatedBy = updatedBy;
+        this.company = company;
+        this.resumes = resumes;
+    }
+
+
+
+
+
 
     public int getAge() {
         return age;
@@ -191,6 +204,30 @@ public class User {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+
+
+
+
+
+    public List<Resume> getResumes() {
+        return resumes;
+    }
+
+
+    public void setResumes(List<Resume> resumes) {
+        this.resumes = resumes;
+    }
+
+
+    public Role getRole() {
+        return role;
+    }
+
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
 }

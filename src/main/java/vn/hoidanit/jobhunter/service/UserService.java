@@ -10,14 +10,16 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import jakarta.persistence.EntityNotFoundException;
+import vn.hoidanit.jobhunter.service.error.RemoteEntityNotFound;
 import vn.hoidanit.jobhunter.domain.Company;
+import vn.hoidanit.jobhunter.domain.Role;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.res.CompanyResponce;
 import vn.hoidanit.jobhunter.domain.res.ResUpdateUserResponce;
 import vn.hoidanit.jobhunter.domain.res.RestFetchUserResponce;
 import vn.hoidanit.jobhunter.domain.res.RestNewUserResponce;
 import vn.hoidanit.jobhunter.domain.res.ResultPaginationDTO;
+import vn.hoidanit.jobhunter.repository.RoleRepository;
 import vn.hoidanit.jobhunter.repository.UserRepository;
 import vn.hoidanit.jobhunter.service.error.EmailExistedException;
 
@@ -27,11 +29,14 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final CompanyService companyService;
+    private final RoleService roleService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, CompanyService companyService) {
+    public UserService(RoleService roleService, UserRepository userRepository, PasswordEncoder passwordEncoder,
+            CompanyService companyService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.companyService = companyService;
+        this.roleService = roleService;
     }
 
     public void handleUpdateRefreshToken(User user, String token) {
@@ -45,9 +50,13 @@ public class UserService {
         return this.userRepository.findByRefreshTokenAndEmail(refreshToken, email);
     }
 
-    public RestNewUserResponce handleSaveUser(User user) throws EmailExistedException {
+    public RestNewUserResponce handleSaveUser(User user) throws EmailExistedException, RemoteEntityNotFound {
         if (this.getUserByUserName(user.getEmail()) != null) {
             throw new EmailExistedException("Email Already Existed");
+        }
+        Role role = this.roleService.getRoleById(user.getRole().getId());
+        if (role == null) {
+            throw new RemoteEntityNotFound("Role not found");
         }
         RestNewUserResponce userResponce = new RestNewUserResponce();
         CompanyResponce companyResponce = new CompanyResponce();
@@ -60,6 +69,7 @@ public class UserService {
                 companyResponce.setName(company.getName());
             }
         }
+        user.setRole(role);
         user = this.userRepository.save(user);
 
         userResponce.setAddress(user.getAddress());
@@ -70,12 +80,13 @@ public class UserService {
         userResponce.setId(user.getId());
         userResponce.setName(user.getName());
         userResponce.setCompany(companyResponce);
+        userResponce.setRole(user.getRole().getName());
         return userResponce;
     }
 
-    public void handleDeleteUser(long id) throws EntityNotFoundException {
+    public void handleDeleteUser(long id) throws RemoteEntityNotFound {
         if (this.userRepository.findById(id) == null) {
-            throw new EntityNotFoundException("User not found");
+            throw new RemoteEntityNotFound("User not found");
         }
         this.userRepository.deleteById(id);
     }
@@ -88,10 +99,10 @@ public class UserService {
         return null;
     }
 
-    public RestFetchUserResponce FetchUserById(long id) throws EntityNotFoundException {
+    public RestFetchUserResponce FetchUserById(long id) throws RemoteEntityNotFound {
         Optional<User> userOptional = this.userRepository.findById(id);
         if (!userOptional.isPresent()) {
-            throw new EntityNotFoundException("User not existed");
+            throw new RemoteEntityNotFound("User not existed");
         }
         User user = userOptional.get();
         RestFetchUserResponce userResponce = new RestFetchUserResponce();
@@ -101,7 +112,7 @@ public class UserService {
         userResponce.setAge(user.getAge());
         userResponce.setGender(user.getGender());
         userResponce.setAddress(user.getAddress());
-
+        userResponce.setRole(user.getRole().getName());
         return userResponce;
     }
 
@@ -124,6 +135,7 @@ public class UserService {
             userResponce.setAge(user.getAge());
             userResponce.setGender(user.getGender());
             userResponce.setAddress(user.getAddress());
+            userResponce.setRole(user.getRole().getName());
             RestFetchUsers.add(userResponce);
         }
         res.setResult(RestFetchUsers);
@@ -134,10 +146,10 @@ public class UserService {
         return this.userRepository.save(user);
     }
 
-    public ResUpdateUserResponce handleUpdateUser(User updatedUser) throws EntityNotFoundException {
+    public ResUpdateUserResponce handleUpdateUser(User updatedUser) throws RemoteEntityNotFound {
         User user = this.getUserById(updatedUser.getId());
         if (user == null) {
-            throw new EntityNotFoundException("User not existed");
+            throw new RemoteEntityNotFound("User not existed");
         }
         CompanyResponce companyResponce = new CompanyResponce();
         user.setName(updatedUser.getName());
@@ -152,6 +164,10 @@ public class UserService {
                 companyResponce.setName(company.getName());
             }
         }
+        Role role = this.roleService.getRoleById(updatedUser.getRole().getId());
+        if (role != null) {
+            user.setRole(role);
+        }
         user = this.userRepository.save(user);
 
         ResUpdateUserResponce userResponce = new ResUpdateUserResponce();
@@ -161,6 +177,7 @@ public class UserService {
         userResponce.setGender(user.getGender());
         userResponce.setAge(user.getAge());
         userResponce.setUpdatedAt(user.getUpdatedAt());
+        userResponce.setRole(user.getRole().getName());
         return userResponce;
     }
 
